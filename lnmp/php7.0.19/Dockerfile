@@ -4,14 +4,13 @@ RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backu
  && curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo \
  && sed -i -e '/mirrors.cloud.aliyuncs.com/d' -e '/mirrors.aliyuncs.com/d' /etc/yum.repos.d/CentOS-Base.repo \
  && yum clean all && yum makecache \
- && yum install libxml2 libxml2-devel openssl openssl-devel bzip2 bzip2-devel libcurl libcurl-devel  gmp gmp-devel libmcrypt libmcrypt-devel readline readline-devel libxslt libxslt-devel crontabs libpng libpng-devel libjpeg-turbo libjpeg-turbo-devel freetype freetype-devel gd -y \
+ && yum install libxml2 libxml2-devel openssl openssl-devel bzip2 bzip2-devel libcurl libcurl-devel  gmp gmp-devel libmcrypt libmcrypt-devel readline readline-devel libxslt libxslt-devel crontabs libpng libpng-devel libjpeg-turbo libjpeg-turbo-devel freetype freetype-devel gd autoconf make wget gcc-c++ git unzip -y \
  && yum clean all \
  && rm -rf /var/cache/yum \
  && rm /etc/localtime \
  && ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 FROM Base as phpBuilder
-RUN yum install wget gcc-c++ make autoconf git unzip -y
 
 # 安装nginx
 RUN wget -O nginx-1.14.2.tar.gz http://nginx.org/download/nginx-1.14.2.tar.gz \
@@ -77,7 +76,9 @@ RUN groupadd -r nginx \
  && ln -sf /dev/stdout /var/log/nginx/access.log \
  && ln -sf /dev/stderr /var/log/nginx/error.log
 
-ENV PATH=$PATH:/usr/local/php/bin:/usr/local/php/sbin/php-fpm:/usr/local/nginx/sbin
+RUN ln -sf /usr/local/php/bin/* /usr/local/bin \
+ && ln -sf /usr/local/php/sbin/php-fpm /usr/local/bin/php-fpm \
+ && ln -sf /usr/local/nginx/sbin/* /usr/local/bin
 
 CMD ["/usr/local/bin/bootstrap.sh"]
 
