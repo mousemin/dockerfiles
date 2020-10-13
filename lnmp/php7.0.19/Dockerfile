@@ -69,6 +69,7 @@ FROM Base as phpBase
 COPY --from=phpBuilder /usr/local/nginx /usr/local/nginx
 COPY --from=phpBuilder /usr/local/php /usr/local/php
 COPY --from=phpBuilder /etc/php.ini /etc/php.ini
+COPY --from=phpBuilder /usr/local/bin/bootstrap.sh /usr/local/bin/bootstrap.sh
 RUN groupadd -r nginx \
  && useradd --no-log-init --create-home -r -g nginx nginx \
  && mkdir -p /data/webdata \
@@ -78,4 +79,5 @@ RUN groupadd -r nginx \
 
 ENV PATH=$PATH:/usr/local/php/bin:/usr/local/php/sbin/php-fpm:/usr/local/nginx/sbin
 
+CMD ["/usr/local/bin/bootstrap.sh"]
 
